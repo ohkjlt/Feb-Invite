@@ -246,7 +246,16 @@
                 }, 3000);
             }, 300);
         });
-
+        
+        sendBtn.addEventListener('click', () => {
+            // Show the custom error message instead of processing Firestore logic
+            errorMsg.classList.remove('hidden');
+            
+            // Optional: briefly pulse the message to grab attention
+            errorMsg.classList.add('animate-pulse');
+            setTimeout(() => errorMsg.classList.remove('animate-pulse'), 2000);
+        });
+        
         function createHearts() {
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
@@ -271,6 +280,7 @@
     </script>
 </body>
 </html>
+
 
 
 
