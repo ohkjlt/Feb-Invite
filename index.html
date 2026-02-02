@@ -239,31 +239,6 @@
             }, 300);
         });
 
-        // CLOUD STORAGE: Save Suggestion
-        sendBtn.addEventListener('click', async () => {
-            const text = suggestionBox.value.trim();
-            if (text !== "" && auth.currentUser) {
-                sendBtn.disabled = true;
-                sendBtn.innerText = "Saving...";
-                
-                try {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'suggestions'), {
-                        text: text,
-                        timestamp: new Date()
-                    });
-                    
-                    thankYou.classList.remove('hidden');
-                    suggestionBox.disabled = true;
-                    sendBtn.classList.add('hidden');
-                } catch (e) {
-                    alert("Error saving: " + e.message);
-                    sendBtn.disabled = false;
-                    sendBtn.innerText = "Save Suggestion";
-                }
-            }
-        });
-
-        
         function createHearts() {
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
@@ -288,3 +263,4 @@
     </script>
 </body>
 </html>
+
