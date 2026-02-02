@@ -147,39 +147,19 @@
                     Save Request
                 </button>
             </div>
-            <p id="thank-you-msg" class="hidden text-rose-500 text-sm mt-3 animate-bounce">Saved! Hopefully, but let me know in case it doesn't work. </p>
+            <p id="thank-you-msg" class="hidden text-rose-500 text-sm mt-3 animate-bounce">This doesn't really save so you're going to have to let me know lol. </p>
         </div>
 
-        <!-- ADMIN VIEW PANEL (HIDDEN BY DEFAULT) -->
-        <div id="admin-panel" class="hidden mt-8 p-6 bg-gray-50 rounded-2xl border border-gray-200">
-            <h3 class="font-bold text-gray-700 mb-4">Her Suggestions:</h3>
-            <div id="suggestion-list" class="space-y-2 text-sm text-gray-600 italic">
-                <!-- Suggestions will appear here -->
-                No suggestions yet.
-            </div>
-        </div>
 
         <div class="mt-12 text-center">
             <p class="cursive text-2xl text-rose-500 mb-4 italic"></p>
             <div class="flex flex-col items-center gap-4">
                 <button onclick="window.print()" class="text-xs text-gray-400 hover:text-rose-400 transition underline">Save Our Plan</button>
-                <button id="admin-trigger" class="text-[10px] text-gray-300 hover:text-rose-200 transition">Admin: View Request</button>
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-        // Firebase Configuration (Using provided environment variables)
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'valentine-app';
-
         // Elements
         const noBtn = document.getElementById('no-btn');
         const yesBtn = document.getElementById('yes-btn');
@@ -204,23 +184,32 @@
 
         function moveButton() {
             moveCount++;
-            const padding = 20;
-            const btnRect = noBtn.getBoundingClientRect();
-            const maxX = window.innerWidth - btnRect.width - padding;
-            const maxY = window.innerHeight - btnRect.height - padding;
-            const newX = Math.max(padding, Math.random() * maxX);
-            const newY = Math.max(padding, Math.random() * maxY);
             
+            // Randomly update text first (important because text affects button width)
+            const phrases = ["Nice try! ✈️", "Miles can't stop us!", "Still No? 🥺", "Just click YES!", "I'm faster than Wi-Fi!"];
+            if (moveCount % 4 === 0) noBtn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+
+            // Essential: Use fixed positioning for the move
             noBtn.style.position = 'fixed';
-            noBtn.style.left = `${newX}px`;
-            noBtn.style.top = `${newY}px`;
             noBtn.style.margin = '0';
             
+            // Calculate constraints based on CURRENT button size and window size
+            const btnRect = noBtn.getBoundingClientRect();
+            const padding = 24; // Keep it slightly away from the edges
+            
+            const maxX = window.innerWidth - btnRect.width - padding;
+            const maxY = window.innerHeight - btnRect.height - padding;
+            
+            // Generate valid random coordinates
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+            
+            // Make YES grow
             yesScale += 0.2;
             yesBtn.style.transform = `scale(${yesScale})`;
-
-            const phrases = ["Nice try! ✈️", "Miles can't stop us!", "Still No? 🥺", "Just click YES!", "I'm faster than Wi-Fi!"];
-            if (moveCount % 5 === 0) noBtn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
         }
 
         noBtn.addEventListener('mouseover', moveButton);
@@ -274,32 +263,7 @@
             }
         });
 
-        // ADMIN: View Suggestions
-        adminTrigger.addEventListener('click', async () => {
-            const pw = prompt("Enter Admin Password:");
-            if (pw === "love2026") {
-                adminPanel.classList.toggle('hidden');
-                if (!adminPanel.classList.contains('hidden')) {
-                    suggestionList.innerHTML = "Loading...";
-                    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'suggestions'));
-                    const snapshot = await getDocs(q);
-                    suggestionList.innerHTML = "";
-                    if (snapshot.empty) {
-                        suggestionList.innerHTML = "No suggestions yet.";
-                    } else {
-                        snapshot.forEach(doc => {
-                            const p = document.createElement('p');
-                            p.className = "p-2 border-b border-gray-100 last:border-0";
-                            p.innerText = `• "${doc.data().text}"`;
-                            suggestionList.appendChild(p);
-                        });
-                    }
-                }
-            } else {
-                alert("Incorrect password!");
-            }
-        });
-
+        
         function createHearts() {
             for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
