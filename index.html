@@ -197,50 +197,25 @@
             const phrases = ["Nice try! ✈️", "Miles can't stop us!", "Still No? 🥺", "Just click YES!", "I'm faster than Wi-Fi!"];
             if (moveCount % 4 === 0) noBtn.innerText = phrases[Math.floor(Math.random() * phrases.length)];
 
-            // Get current dimensions of the browser viewport
+            // Get viewport dimensions
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
             
-            // Get current button size
-            const btnRect = noBtn.getBoundingClientRect();
-            const padding = 30; // Margin to prevent sticking to edges
+            // Get button size
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            const padding = 30;
             
-            // Get mouse/touch position
-            const mouseX = e.clientX || (e.touches && e.touches[0].clientX);
-            const mouseY = e.clientY || (e.touches && e.touches[0].clientY);
-            
-            // Calculate center of button
-            const btnCenterX = btnRect.left + btnRect.width / 2;
-            const btnCenterY = btnRect.top + btnRect.height / 2;
-            
-            // Vector from mouse to button center
-            let deltaX = btnCenterX - mouseX;
-            let deltaY = btnCenterY - mouseY;
-            
-            // Jump distance
-            const distance = 160; 
-            const angle = Math.atan2(deltaY, deltaX);
-            
-            // New target position
-            let newX = btnRect.left + Math.cos(angle) * distance;
-            let newY = btnRect.top + Math.sin(angle) * distance;
-            
-            // CLAMP TO VIEWPORT BOUNDS
-            const minX = padding;
-            const maxX = viewportWidth - btnRect.width - padding;
-            const minY = padding;
-            const maxY = viewportHeight - btnRect.height - padding;
-            
-            // Final clamped coordinates
-            newX = Math.min(Math.max(minX, newX), maxX);
-            newY = Math.min(Math.max(minY, newY), maxY);
+            // Generate random coordinate within viewport
+            const randomX = Math.floor(Math.random() * (viewportWidth - btnWidth - padding * 2)) + padding;
+            const randomY = Math.floor(Math.random() * (viewportHeight - btnHeight - padding * 2)) + padding;
             
             // Apply new position
-            noBtn.style.left = newX + 'px';
-            noBtn.style.top = newY + 'px';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
             
             // Expand YES button
-            yesScale += 0.15;
+            yesScale += 0.12;
             yesBtn.style.transform = `scale(${yesScale})`;
         }
 
@@ -296,6 +271,7 @@
     </script>
 </body>
 </html>
+
 
 
 
